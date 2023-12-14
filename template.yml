@@ -1,0 +1,165 @@
+Version: 1.0
+Date: 14.11.2023
+
+# Service Description
+Description:
+  Name: Name1
+  Type: Service
+  Criticality: Tier1/Tier2/Tier3
+
+# Service Functionality
+Functionality: # Add a short description of what the service does
+
+# Data Processing Details
+DataProcessed: 
+  Type: Secret/Confidential/Internal/Public
+  DataCategory: Auth/PCI/PII/etc
+  EncryptionAtRest: Yes/No
+
+# Components Used by the Service
+Components:
+  Internal: 
+    Exist: Yes/No
+    Source: Private/Public
+    Note: Namespacing/Scoped Package Access/etc
+  External: 
+    Exist: Yes/No
+    PackageManager: NPM/Maven/NuGet/RubyGems/etc # List all used
+
+# Pipeline Configuration
+Pipeline:
+  Type: GithubActions/Jenkins/etc
+  CODEOWNERS: Yes/No
+  BranchProtection: Yes/No
+  SignCommits: Yes/No
+  PinActions: Yes/No
+  
+# Network Information
+Network:
+  Access: Public/Private
+
+# Data Flow Templates and Examples
+
+# Data flow template
+- dataFlow:
+    name: Name # Flow name.
+    description: Description # Flow description.
+    source: StartingPoint # Starting point of the data flow.
+    interactions: # List the interactions.
+      - from: Service name 1
+        to: Service name 2
+        method: MethodName
+        protocol: Protocol 
+      - from: Service name 1
+        to: Database1
+        method: MethodName
+        protocol: Protocol 
+    servicesInvolved: [service1, service2, service3]
+
+# Authentication Flow example
+- dataFlow:
+    name: UserAuthenticationFlow
+    description: Handles user login and authentication.
+    source: UserLoginInterface
+    EncryptionTransit: Yes
+    Authentication:
+      Exist: Yes
+      Type: JWT
+    Authorization: read-write
+    Protocol: HTTPS
+    Communication:
+      Type: RESTful API
+    interactions:
+      - from: UserLoginInterface
+        to: AuthenticationService
+        method: RESTful API
+        protocol: HTTPS
+      - from: AuthenticationService
+        to: Database
+        method: CredentialVerification
+        protocol: JDBC/ODBC/DatabaseAPI
+    servicesInvolved: [UserLoginInterface, AuthenticationService, Database]
+
+# Order Processing and Notification example
+- dataFlow:
+    name: OrderProcessingNotificationFlow
+    description: Processes orders and sends notifications to users.
+    source: OrderSubmissionInterface
+    EncryptionTransit: Yes
+    Authentication:
+      Exist: Yes
+      Type: API Keys
+    Authorization: admin
+    Protocol: HTTPS/AMQP/SMTP
+    Communication:
+      Type: REST APIs/Message Queues/WebSockets
+    interactions:
+      - from: OrderSubmissionInterface
+        to: OrderProcessingService
+        method: RESTful API
+        protocol: HTTPS
+      - from: OrderProcessingService
+        to: NotificationService
+        method: MessageQueue
+        protocol: AMQP
+      - from: NotificationService
+        to: EmailService
+        method: SMTP
+        protocol: SMTP
+    servicesInvolved: [OrderSubmissionInterface, OrderProcessingService, NotificationService, EmailService]
+
+# Data Reporting and Analytics example
+- dataFlow:
+    name: DataReportingAnalyticsFlow
+    description: Aggregates data and generates analytics reports.
+    source: DataCollectionService
+    EncryptionTransit: Yes
+    Authentication:
+      Exist: Yes
+      Type: OAuth
+    Authorization: read-write
+    Protocol: HTTPS/SQL
+    Communication:
+      Type: REST APIs/Batch Processing
+    interactions:
+      - from: DataCollectionService
+        to: DataWarehouse
+        method: BatchUpload
+        protocol: HTTPS
+      - from: DataWarehouse
+        to: AnalyticsService
+        method: DataQuery
+        protocol: SQL
+      - from: AnalyticsService
+        to: ReportingTool
+        method: RESTful API
+        protocol: HTTPS
+    servicesInvolved: [DataCollectionService, DataWarehouse, AnalyticsService, ReportingTool]
+
+# Inventory Management example
+- dataFlow:
+    name: InventoryManagementFlow
+    description: Manages inventory levels based on orders and supply chain updates.
+    source: InventoryUpdateInterface
+    EncryptionTransit: Yes
+    Authentication:
+      Exist: Yes
+      Type: Client Certificates
+    Authorization: admin
+    Protocol: HTTPS
+    Communication:
+      Type: REST APIs/Direct Database Access
+    interactions:
+      - from: InventoryUpdateInterface
+        to: InventoryService
+        method: RESTful API
+        protocol: HTTPS
+      - from: InventoryService
+        to: SupplierService
+        method: RESTful API
+        protocol: HTTPS
+      - from: InventoryService
+        to: Database
+        method: UpdateQuery
+        protocol: JDBC/ODBC/DatabaseAPI
+    servicesInvolved: [InventoryUpdateInterface, InventoryService, SupplierService, Database]
