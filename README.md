@@ -12,7 +12,7 @@ It leverages AI (via OpenAI's GPT models) to analyze service descriptions, ident
 
 ## Model supported
 
-- GPT-3
+- GPT-3.5
 - GPT-4 (Soon)
 - Claude (Planned)
 - Mixtral 7b (Planned)
