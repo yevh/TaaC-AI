@@ -1,4 +1,4 @@
-Version: 1.0
+Version: '1.0'
 Date: 14.11.2023
 
 # Service Description
@@ -24,7 +24,7 @@ Components:
     Note: Namespacing/Scoped Package Access/etc
   External: 
     Exist: Yes/No
-    PackageManager: NPM/Maven/NuGet/RubyGems/etc # List all used
+    PackageManager: NPM/Maven/NuGet/RubyGems/etc
 
 # Pipeline Configuration
 Pipeline:
@@ -38,27 +38,9 @@ Pipeline:
 Network:
   Access: Public/Private
 
-# Data Flow Templates and Examples
-
-# Data flow template
-- dataFlow:
-    name: Name # Flow name.
-    description: Description # Flow description.
-    source: StartingPoint # Starting point of the data flow.
-    interactions: # List the interactions.
-      - from: Service name 1
-        to: Service name 2
-        method: MethodName
-        protocol: Protocol 
-      - from: Service name 1
-        to: Database1
-        method: MethodName
-        protocol: Protocol 
-    servicesInvolved: [service1, service2, service3]
-
-# Authentication Flow example
-- dataFlow:
-    name: UserAuthenticationFlow
+# Data Flow Examples
+dataFlow:
+  - name: UserAuthenticationFlow
     description: Handles user login and authentication.
     source: UserLoginInterface
     EncryptionTransit: Yes
@@ -80,9 +62,7 @@ Network:
         protocol: JDBC/ODBC/DatabaseAPI
     servicesInvolved: [UserLoginInterface, AuthenticationService, Database]
 
-# Order Processing and Notification example
-- dataFlow:
-    name: OrderProcessingNotificationFlow
+  - name: OrderProcessingNotificationFlow
     description: Processes orders and sends notifications to users.
     source: OrderSubmissionInterface
     EncryptionTransit: Yes
@@ -108,9 +88,7 @@ Network:
         protocol: SMTP
     servicesInvolved: [OrderSubmissionInterface, OrderProcessingService, NotificationService, EmailService]
 
-# Data Reporting and Analytics example
-- dataFlow:
-    name: DataReportingAnalyticsFlow
+  - name: DataReportingAnalyticsFlow
     description: Aggregates data and generates analytics reports.
     source: DataCollectionService
     EncryptionTransit: Yes
@@ -136,9 +114,7 @@ Network:
         protocol: HTTPS
     servicesInvolved: [DataCollectionService, DataWarehouse, AnalyticsService, ReportingTool]
 
-# Inventory Management example
-- dataFlow:
-    name: InventoryManagementFlow
+  - name: InventoryManagementFlow
     description: Manages inventory levels based on orders and supply chain updates.
     source: InventoryUpdateInterface
     EncryptionTransit: Yes
