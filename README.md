@@ -125,6 +125,7 @@ dataFlow:  # Removed the dash here
 - ~~Template Design~~
 - ~~Basic Functionality~~
 - ~~GPT-3 Integration~~
+- ~~Report generation~~
 - ~~Manually adding identified threats~~
 - GPT-4 Integration 🔜 
 - Claude Integration 
