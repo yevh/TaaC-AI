@@ -1,7 +1,7 @@
-Version: 1.0
+Version: '1.0'
 Date: 14.11.2023
 
-# Authentication Service Description
+# Service Description
 Description:
   Name:  AuthService
   Type: Service
@@ -16,7 +16,7 @@ DataProcessed:
   DataCategory: Auth
   EncryptionAtRest: Yes
 
-# Components Used by the Service
+# Components Used
 Components:
   Internal: 
     Exist: Yes
@@ -38,9 +38,9 @@ Pipeline:
 Network:
   Access: Private
 
-# Authentication Service Data Flow
-- dataFlow:
-    name: UserAuthenticationFlow
+# Data Flow
+dataFlow:  # Removed the dash here
+  - name: UserAuthenticationFlow
     description: Authenticates users and issues tokens.
     source: UserLoginInterface
     EncryptionTransit: Yes
