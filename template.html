@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ service.Description.Name }} Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/tabler@1.0.0-alpha.10/dist/css/tabler.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5;
+            color: #333740;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 90%;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .page-header h1 {
+            color: #1A202C;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-around;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #E2E8F0;
+            color: #1A202C;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-body p, .card-body h3 {
+            margin: 10px 0;
+        }
+
+        #threatTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #threatTable th, #threatTable td {
+            border: 1px solid #E3E4E6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #threatTable th {
+            background-color: #CBD5E0;
+            color: #1A202C;
+        }
+
+        #threatTable tr:nth-child(even) {
+            background-color: #F7FAFC;
+        }
+
+        .table-button {
+            padding: 10px 20px;
+            margin: 10px 5px 10px 0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4C51BF;
+            transition: background-color 0.2s;
+        }
+
+        .table-button:hover {
+            background-color: #5A60A5;
+        }
+
+        .add-button {
+            background-color: #34C759;
+        }
+
+        .delete-button {
+            background-color: #FF3B30;
+        }
+
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+
+            .card {
+                min-width: auto;
+                max-width: 600px;
+                margin: 10px auto;
+            }
+        }
+        
+        .page-header h1 {
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .download-button {
+            background-color: #4C51BF; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            font-size: 14px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: background-color 0.3s, transform 0.2s; 
+            text-align: center; 
+            text-decoration: none; 
+            display: inline-block; 
+            line-height: normal; 
+            white-space: nowrap; 
+        }
+
+        .download-button:hover {
+            background-color: #5A60A5; 
+            transform: scale(1.05); 
+        }
+
+        .download-button:focus {
+            outline: none; 
+            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.5); 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>{{ service.Description.Name }} - Threat Modeling Report <span id="current-timestamp"></span> &nbsp; 
+                <button onclick="downloadHTML()" class="download-button">Download Report</button>
+            </h1>
+        </header>
+
+        <div class="flex-container">
+            <!-- Service Description -->
+            <section class="card">
+                <div class="card-header">Service Description</div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ service.Description.Name }}</p>
+                    <p><strong>Type:</strong> {{ service.Description.Type }}</p>
+                    <p><strong>Criticality:</strong> {{ service.Description.Criticality }}</p>
+                </div>
+            </section>
+
+            <!-- Service Functionality -->
+            <section class="card">
+                <div class="card-header">Service Functionality</div>
+                <div class="card-body">
+                    <p>{{ service.Functionality }}</p>
+                </div>
+            </section>
+
+            <!-- Data Processing Details -->
+            <section class="card">
+                <div class="card-header">Data Processing Details</div>
+                <div class="card-body">
+                    <p><strong>Type:</strong> {{ service.DataProcessed.Type }}</p>
+                    <p><strong>Data Category:</strong> {{ service.DataProcessed.DataCategory }}</p>
+                    <p><strong>Encryption at Rest:</strong> {{ service.DataProcessed.EncryptionAtRest }}</p>
+                </div>
+            </section>
+
+            <!-- Network Information -->
+            <section class="card">
+                <div class="card-header">Network Information</div>
+                <div class="card-body">
+                    <p><strong>Access:</strong> {{ service.Network.Access }}</p>
+                </div>
+            </section>
+
+            <!-- Components -->
+            <section class="card">
+                <div class="card-header">Components</div>
+                <div class="card-body">
+                    <h3>Internal Components</h3>
+                    <p><strong>Exist:</strong> {{ service.Components.Internal.Exist }}</p>
+                    <p><strong>Source:</strong> {{ service.Components.Internal.Source }}</p>
+                    <h3>External Components</h3>
+                    <p><strong>Exist:</strong> {{ service.Components.External.Exist }}</p>
+                    <p><strong>Package Manager:</strong> {{ service.Components.External.PackageManager }}</p>
+                </div>
+            </section>
+
+            <!-- Pipeline Configuration -->
+            <section class="card">
+                <div class="card-header">Pipeline Configuration</div>
+                <div class="card-body">
+                    <p><strong>Type:</strong> {{ service.Pipeline.Type }}</p>
+                    <p><strong>CODEOWNERS:</strong> {{ service.Pipeline.CODEOWNERS }}</p>
+                    <p><strong>Branch Protection:</strong> {{ service.Pipeline.BranchProtection }}</p>
+                    <p><strong>Sign Commits:</strong> {{ service.Pipeline.SignCommits }}</p>
+                    <p><strong>Pin Actions:</strong> {{ service.Pipeline.PinActions }}</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Data Flow Information -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Data Flow Information</h2>
+            </div>
+            <div class="card-body">
+                <div id="data-flow-graph"></div>
+            </div>
+        </div>
+
+        <!-- Threat Analysis Section -->
+        <section class="card">
+            <div class="card-header">Threats</div>
+            <div class="card-body">
+                <div id="aiThreatModeling">{{ threat_analysis_html | safe }}</div>
+                <br />
+                <table id="threatTable" style="width:100%;">
+                    <thead>
+                        <div class="card-header">Manual Threat Modeling Analysis</div>
+                        <tr>
+                            <th>Select</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Categories</th>
+                            <th>Remediation</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Pre-existing table rows -->
+                    </tbody>
+                </table>
+                <div style="margin-top: 10px;">
+                    <button onclick="addRow()" class="table-button add-button">Add Row</button>
+                    <button onclick="deleteSelectedRow()" class="table-button delete-button">Delete Selected Row</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script>
+        function addRow() {
+            var table = document.getElementById("threatTable");
+            var newRow = table.insertRow(-1);
+
+            var cellSelect = newRow.insertCell(0);
+            cellSelect.innerHTML = '<input type="radio" name="selectRow">';
+
+            for (var i = 1; i <= 4; i++) {
+                var cell = newRow.insertCell(i);
+                cell.classList.add('textarea-cell');
+                cell.innerHTML = '<textarea oninput="autoGrow(this)"></textarea>';
+            }
+
+            var cellStatus = newRow.insertCell(5);
+            cellStatus.innerHTML = '<input type="checkbox" onchange="toggleStrikeThrough(this)">';
+        }
+
+        function autoGrow(element) {
+            element.style.height = "5px";
+            element.style.height = (element.scrollHeight) + "px";
+        }
+
+        function deleteSelectedRow() {
+            var table = document.getElementById("threatTable");
+            var radios = document.getElementsByName('selectRow');
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    table.deleteRow(i + 1); 
+                    break;
+                }
+            }
+        }
+
+        function toggleStrikeThrough(checkbox) {
+            var row = checkbox.parentElement.parentElement;
+            for (var i = 0; i < row.cells.length - 1; i++) {
+                var cellContent = row.cells[i].querySelector('textarea') || row.cells[i];
+                cellContent.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var cardBody = document.querySelector('.card-body');
+            if (cardBody) {
+                cardBody.addEventListener('change', function(event) {
+                    if (event.target.type === 'checkbox') {
+                        toggleStrikeThrough(event.target);
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        function openModal() {
+            document.getElementById("dataFlowModal").style.display = "block";
+            initializeGraph('modal-content'); 
+        }
+
+        function closeModal() {
+            document.getElementById("dataFlowModal").style.display = "none";
+            initializeGraph('data-flow-graph'); 
+        }
+
+    
+        function initializeGraph(containerId) {
+            var container = document.getElementById(containerId);
+            var existingSVG = container.querySelector("svg");
+            if (existingSVG) {
+                existingSVG.remove();
+            }
+
+            var width = 960, height = 600;
+            var nodeRadius = 70;
+            var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+            var svg = d3.select(`#${containerId}`).append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+            svg.append("defs").selectAll("marker")
+                .data(["end"])
+                .enter().append("marker")
+                .attr("id", String)
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", nodeRadius + 10)
+                .attr("refY", 0)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M0,-5L10,0L0,5");
+
+            var simulation = d3.forceSimulation()
+                .force("link", d3.forceLink().id(d => d.id).distance(200))
+                .force("charge", d3.forceManyBody())
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            var graph = ;
+            
+            var link = svg.append("g")
+                .attr("class", "links")
+                .selectAll("line")
+                .data(graph.links)
+                .enter().append("line")
+                .attr("stroke", "black")
+                .attr("stroke-width", 2)
+                .attr("marker-end", "url(#end)");
+
+            var node = svg.append("g")
+                .attr("class", "nodes")
+                .selectAll("circle")
+                .data(graph.nodes)
+                .enter().append("circle")
+                .attr("r", nodeRadius)
+                .attr("fill", d => color(d.group))
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            var nodeLabels = svg.selectAll(".node-label")
+                .data(graph.nodes)
+                .enter().append("text")
+                .classed("node-label", true)
+                .attr("text-anchor", "middle")
+                .style("fill", "#fff")
+                .style("font-size", "14px")
+                .text(d => d.id);
+
+            var linkLabels = svg.selectAll(".link-label")
+                .data(graph.links)
+                .enter().append("text")
+                .classed("link-label", true)
+                .attr("font-size", 12)
+                .attr("dx", 50)
+                .attr("dy", -5)
+                .text(d => d.type);
+
+            simulation.nodes(graph.nodes).on("tick", ticked);
+            simulation.force("link").links(graph.links);
+
+            function ticked() {
+                link.attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node.attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+
+                nodeLabels.attr("x", d => d.x)
+                        .attr("y", d => d.y + 5);
+
+                linkLabels.attr("x", d => (d.source.x + d.target.x) / 2)
+                        .attr("y", d => (d.source.y + d.target.y) / 2);
+            }
+
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
+
+    </script>
+
+<script>
+    var graph = {{ data_flow_json | safe }};
+    var width = 960, height = 600;
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    var nodeRadius = 70;
+
+    var svg = d3.select("#data-flow-graph").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+    svg.append("defs").selectAll("marker")
+        .data(["end"])
+      .enter().append("marker")
+        .attr("id", String)
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", nodeRadius + 10)
+        .attr("refY", 0)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+      .append("path")
+        .attr("d", "M0,-5L10,0L0,5");
+
+    var simulation = d3.forceSimulation()
+        .force("link", d3.forceLink().id(d => d.id).distance(200))
+        .force("charge", d3.forceManyBody())
+        .force("center", d3.forceCenter(width / 2, height / 2));
+
+    var link = svg.append("g")
+        .attr("class", "links")
+        .selectAll("line")
+        .data(graph.links)
+        .enter().append("line")
+        .attr("stroke", "black")
+        .attr("stroke-width", 2)
+        .attr("marker-end", "url(#end)");
+
+    var node = svg.append("g")
+        .attr("class", "nodes")
+        .selectAll("circle")
+        .data(graph.nodes)
+        .enter().append("circle")
+        .attr("r", nodeRadius)
+        .attr("fill", d => color(d.group))
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+    var nodeLabels = svg.selectAll(".node-label")
+        .data(graph.nodes)
+        .enter().append("text")
+        .classed("node-label", true)
+        .attr("text-anchor", "middle")
+        .style("fill", "#fff")
+        .style("font-size", "14px")
+        .text(d => d.id);
+
+    var linkLabels = svg.selectAll(".link-label")
+        .data(graph.links)
+        .enter().append("text")
+        .classed("link-label", true)
+        .attr("font-size", 12)
+        .attr("dx", 50) 
+        .attr("dy", -5) 
+        .text(d => d.type);
+
+    simulation.nodes(graph.nodes).on("tick", ticked);
+    simulation.force("link").links(graph.links);
+
+    function ticked() {
+        link.attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        node.attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+
+        nodeLabels.attr("x", d => d.x)
+                  .attr("y", d => d.y + 5);
+
+        linkLabels.attr("x", d => (d.source.x + d.target.x) / 2)
+                  .attr("y", d => (d.source.y + d.target.y) / 2);
+    }
+
+    function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+</script>
+
+<script>
+    function downloadHTML() {
+        var service_name = "{{ service_name }}".replace(/ /g, '_');
+        var current_date = "{{ current_date }}";
+
+        var report_name = service_name + "_" + current_date + "_ThreatModelingReport.html";
+
+        var clone = document.cloneNode(true);
+
+        // Remove elements that should not be in the downloaded report
+        var elementsToRemove = ['.download-button', '.add-button', '.delete-button'];
+        elementsToRemove.forEach(selector => {
+            var elem = clone.querySelector(selector);
+            if (elem) {
+                elem.remove();
+            }
+        });
+
+        // Replace interactive elements with static content
+        Array.from(clone.querySelectorAll('#threatTable .textarea-cell textarea, #threatTable input[type="checkbox"]')).forEach(el => {
+            var staticEl = document.createElement('span');
+            staticEl.textContent = el.type === 'checkbox' ? (el.checked ? 'Completed' : 'Pending') : el.value;
+            el.parentNode.replaceChild(staticEl, el);
+        });
+
+        var scriptsToRemove = clone.querySelectorAll('script');
+        scriptsToRemove.forEach(script => {
+            script.remove();
+        });
+
+        var blob = new Blob([clone.documentElement.outerHTML], { type: 'text/html' });
+
+        var element = document.createElement('a');
+        element.href = URL.createObjectURL(blob);
+        element.download = report_name;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var currentDate = new Date();
+        var dateString = currentDate.toLocaleString(); 
+
+        document.getElementById('current-timestamp').textContent = dateString;
+    });
+</script>
+
+</body>
+</html>
