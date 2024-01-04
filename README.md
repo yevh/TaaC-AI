@@ -20,6 +20,22 @@ It leverages AI (via OpenAI's GPT models) to analyze service descriptions, ident
 - yi-34b-chat (Future)
 - llama-2-70b (Future)
 
+## Set API Key
+
+Set the openai api key as an environment variable OPENAI_KEY in your operating system
+
+Linux/Mac
+
+```bash
+export OPENAI_KEY=sk-ApiKeyExample
+```
+
+Windows
+
+```bash
+set OPENAI_KEY=sk-ApiKeyExample
+```
+
 ## Install dependencies 
 
 ```bash
