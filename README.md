@@ -15,7 +15,7 @@ It leverages AI (via OpenAI's GPT models) to analyze service descriptions, ident
 - GPT-3.5
 - GPT-4 (Soon)
 - Claude (Planned)
-- Mixtral 7b (Planned)
+- Mistral 7b (Planned)
 - Palm-2-chat-bison (Future)
 - yi-34b-chat (Future)
 - llama-2-70b (Future)
@@ -145,7 +145,7 @@ dataFlow:  # Removed the dash here
 - ~~Manually adding identified threats~~
 - GPT-4 Integration 🔜 
 - Claude Integration 
-- Mixtral 7b Integration 
+- Mistral 7b Integration 
 - Palm-2-chat-bison Integration
 - yi-34b-chat Integration
 - llama-2-70b Integration
