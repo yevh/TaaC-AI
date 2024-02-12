@@ -2,15 +2,16 @@ import os
 import sys
 import yaml
 import json
-import openai
+from openai import OpenAI
 import argparse
 from datetime import datetime, date
 from jinja2 import Environment, FileSystemLoader
 
 class Config:
-    OPENAI_KEY_ENV_VAR = "OPENAI_KEY"
+    OPENAI_KEY = "OPENAI_KEY"
     HTML_OUTPUT_FILE = 'report.html'
     TEMPLATE_FILE = 'template.html'
+    MODEL = 'gpt-3.5-turbo'
 
     @staticmethod
     def set_output_file(service_name):
@@ -26,12 +27,10 @@ class YAMLDataHandler:
         except FileNotFoundError:
             return False, None, f"Error: File '{file_path}' not found."
         except yaml.YAMLError as e:
-            return False, None, f"YAML syntax error in '{file_path}': {e}. Please check for common syntax issues like incorrect indentation, missing colons, or unquoted strings."
-
+            return False, None, f"YAML syntax error in '{file_path}': {e}"
         valid, message = YAMLDataHandler.validate_yaml_data(data)
         if not valid:
-            return False, None, f"YAML data validation error in '{file_path}': {message}"
-
+            return False, None, message
         return True, data, "YAML file is valid."
 
     @staticmethod
@@ -46,30 +45,25 @@ class YAMLDataHandler:
             'Network': {'Access'},
             'dataFlow': list
         }
-
         for key, expected in required_keys.items():
             if key not in data:
                 return False, f"Missing key: '{key}' in YAML data."
-
             if isinstance(expected, set) and not expected.issubset(data[key].keys()):
                 return False, f"Missing keys in '{key}': {expected - data[key].keys()}"
-
             if isinstance(expected, type) and not isinstance(data[key], expected):
                 return False, f"'{key}' should be of type {expected.__name__}."
-
             if key == 'Date':
                 try:
                     datetime.strptime(data[key], required_keys[key])
                 except ValueError:
                     return False, f"'Date' is not in the correct format (DD.MM.YYYY)."
-
         return True, "YAML data is valid."
 
 class ThreatModeling:
-    def __init__(self, service_description):
+    def __init__(self, service_description, model):
         self.service_description = service_description
-        self.openai_key = os.getenv(Config.OPENAI_KEY_ENV_VAR)
-        self.is_key_valid = self.openai_key is not None and len(self.openai_key) > 20
+        self.model = model
+        self.client = OpenAI(api_key=os.getenv(Config.OPENAI_KEY))
 
     @staticmethod
     def convert_data_flow_to_json(data_flows):
@@ -87,10 +81,8 @@ class ThreatModeling:
         return json.dumps({"nodes": list(map(lambda x: {"id": x}, nodes)), "links": links})
 
     def generate_threat_modeling(self):
-        if not self.is_key_valid:
+        if not self.client.api_key:
             return "<p>OpenAI key was not provided or is incorrect. AI Threat Modeling was not performed.</p>"
-        
-        openai.api_key = self.openai_key
 
         prompt = f"""Perform a thorough threat modeling analysis for the provided service, utilizing the STRIDE framework, OWASP Top 10 2021, and OWASP Top 10 CI/CD Security Risks guidelines. The analysis should be formatted as HTML code suitable for inclusion in a web page section. Follow this structured approach:
 
@@ -146,14 +138,18 @@ class ThreatModeling:
         Service data:
         {self.service_description}
     """
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a security expert. Provide a threat analysis."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return response['choices'][0]['message']['content'].strip()
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a security expert. Provide a threat analysis."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            return f"<p>Error generating threat modeling: {str(e)}</p>"
 
 class HTMLReportRenderer:
     def __init__(self, service_info, data_flow_json, threat_analysis_html):
@@ -175,30 +171,29 @@ class HTMLReportRenderer:
         )
 
 class PrintManager:
-    TITLE_STYLE = '\033[1;34m'  
-    NORMAL_STYLE = '\033[0m'  
-    NAME_STYLE = '\033[1;32m'  
-    HIGHLIGHT_STYLE = '\033[1;33m'  
-    FILE_STYLE = '\033[1;33m'  
-    ERROR_STYLE = '\033[1;31m' 
+    TITLE_STYLE = '\033[1;34m'
+    NORMAL_STYLE = '\033[0m'
+    NAME_STYLE = '\033[1;32m'
+    HIGHLIGHT_STYLE = '\033[1;33m'
+    FILE_STYLE = '\033[1;33m'
+    ERROR_STYLE = '\033[1;31m'
 
     @staticmethod
     def print_usage():
         print(f"{PrintManager.TITLE_STYLE}AI-driven Threat modeling-as-a-Code (TaaC) v1.0{PrintManager.NORMAL_STYLE}")
-        print(f"Created by {PrintManager.NAME_STYLE}YevhSec1{PrintManager.NORMAL_STYLE}\n")
+        print(f"Created by YevhSec1\n")
         print(f"{PrintManager.HIGHLIGHT_STYLE}Usage:{PrintManager.NORMAL_STYLE} python3 TaaC.py [options] <yaml_file>\n")
         print(f"{PrintManager.HIGHLIGHT_STYLE}Options:{PrintManager.NORMAL_STYLE}")
-        print("  -h, --help            show this help message and exit\n")
+        print("  -h, --help            show this help message and exit")
+        print("  --model               Select the model version: gpt-3.5-turbo or gpt-4\n")
         print(f"{PrintManager.HIGHLIGHT_STYLE}Arguments:{PrintManager.NORMAL_STYLE}")
         print("  yaml_file             Path to the YAML file containing the service information.\n")
         print(f"{PrintManager.HIGHLIGHT_STYLE}Example:{PrintManager.NORMAL_STYLE}")
-        print("  python3 TaaC.py auth_service.yaml")
+        print("  python3 TaaC.py auth_service.yaml --model gpt-3.5-turbo")
 
     @staticmethod
     def print_progress(file_name):
-        print(f"{PrintManager.TITLE_STYLE}AI-driven Threat modeling-as-a-Code (TaaC) v1.0{PrintManager.NORMAL_STYLE}")
-        print(f"Created by {PrintManager.NAME_STYLE}YevhSec1{PrintManager.NORMAL_STYLE}\n")
-        print(f"{PrintManager.FILE_STYLE}File processed:{PrintManager.NORMAL_STYLE} {file_name}\n")
+        print(f"{PrintManager.TITLE_STYLE}Processing: {file_name}{PrintManager.NORMAL_STYLE}")
         print("Generating report... Please wait.")
 
     @staticmethod
@@ -211,38 +206,37 @@ class PrintManager:
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Generate a threat modeling report from a YAML file.')
-    parser.add_argument('yaml_file', help='Path to the YAML file')
+    parser.add_argument('yaml_file', help='Path to the YAML file containing the service information.')
+    parser.add_argument('--model', choices=['gpt-3.5-turbo', 'gpt-4'], default='gpt-3.5-turbo', help='Choice of GPT model for generating the report.')
     return parser.parse_args()
 
 def main():
     args = parse_arguments()
+
+    Config.MODEL = args.model
 
     valid, service_info, message = YAMLDataHandler.load_and_validate_yaml_file(args.yaml_file)
     if not valid:
         PrintManager.print_error(message)
         return
 
-    try:
-        service_name = service_info.get('Description', {}).get('Name', 'Report')
-        Config.set_output_file(service_name.replace(" ", "_"))
+    service_name = service_info.get('Description', {}).get('Name', 'Report')
+    Config.set_output_file(service_name)
 
-        PrintManager.print_progress(args.yaml_file)
-        service_description = service_info.get('Description', {})
-        
-        data_flows = service_info.get('dataFlow', [])
-        data_flow_json = ThreatModeling.convert_data_flow_to_json(data_flows)
-        
-        threat_modeling = ThreatModeling(json.dumps(service_description, indent=2))
-        threat_analysis_html = threat_modeling.generate_threat_modeling()
-        
-        renderer = HTMLReportRenderer(service_info, data_flow_json, threat_analysis_html)
-        html_report = renderer.render()
-        
-        with open(Config.HTML_OUTPUT_FILE, 'w') as file:
-            file.write(html_report)
-        PrintManager.print_completion()
-    except Exception as e:
-        PrintManager.print_error(str(e))
+    PrintManager.print_progress(args.yaml_file)
+    
+    data_flows = service_info.get('dataFlow', [])
+    data_flow_json = ThreatModeling.convert_data_flow_to_json(data_flows)
+    
+    threat_modeling = ThreatModeling(json.dumps(service_info, indent=2), args.model)
+    threat_analysis_html = threat_modeling.generate_threat_modeling()
+    
+    renderer = HTMLReportRenderer(service_info, data_flow_json, threat_analysis_html)
+    html_report = renderer.render()
+    
+    with open(Config.HTML_OUTPUT_FILE, 'w') as file:
+        file.write(html_report)
+    PrintManager.print_completion()
 
 if __name__ == "__main__":
     main()

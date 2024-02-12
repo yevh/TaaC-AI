@@ -1,6 +1,6 @@
 # AI-driven Threat Modeling-as-a-Code (TaaC)
 
-It leverages AI (via OpenAI's GPT models) to analyze service descriptions, identify security threats, visualize data flow and suggest remediations based on the STRIDE framework and OWASP guidelines. The script generates in-depth HTML report and includes feature for manual risk assessment.
+It leverages AI to analyze service descriptions, identify security threats, visualize data flow and suggest remediations based on the STRIDE framework and OWASP guidelines. The script generates in-depth HTML report and includes feature for manual risk assessment.
 
 ## How It Works
 
@@ -13,11 +13,10 @@ It leverages AI (via OpenAI's GPT models) to analyze service descriptions, ident
 ## Model supported
 
 - GPT-3.5
-- GPT-4 (Soon)
+- GPT-4
 - Claude (Planned)
-- Mistral 7b (Planned)
-- Palm-2-chat-bison (Future)
-- yi-34b-chat (Future)
+- ‎Gemini (Planned)
+- Mistral 7b (Future)
 - llama-2-70b (Future)
 
 ## Set API Key
@@ -45,9 +44,16 @@ pip3 install -r requirements.txt
 ## How to Use ❓
 
 1. Create a valid service description using [these guidelines](src/template.md)
-2. Execute the script
+2. Execute the script (GPT-3.5 is used by default)
+
 ```bash
 python3 TaaC-AI.py <path_to_yaml_file>
+```
+
+Use GPT-4 by specifying the ```--model``` option
+
+```bash
+python3 TaaC-AI.py --model gpt-4 <path_to_yaml_file>
 ```
 3. Open generate .html report
 4. Review AI-driven Threat Modeling Analysis table, and for false positives or resolved issues, mark the 'Status' checkbox
@@ -143,11 +149,10 @@ dataFlow:  # Removed the dash here
 - ~~GPT-3 Integration~~
 - ~~Report generation~~
 - ~~Manually adding identified threats~~
-- GPT-4 Integration 🔜 
+- ~~GPT-4 Integration~~
 - Claude Integration 
-- Mistral 7b Integration 
-- Palm-2-chat-bison Integration
-- yi-34b-chat Integration
+- ‎Gemini Integration
+- Mistral 7b Integration
 - llama-2-70b Integration
 - Accuracy Comparison
 
