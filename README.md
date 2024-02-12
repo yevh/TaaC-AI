@@ -1,6 +1,6 @@
 # AI-driven Threat Modeling-as-a-Code (TaaC)
 
-It leverages AI (via OpenAI's GPT models) to analyze service descriptions, identify security threats, visualise data flow and suggest remediations based on the STRIDE framework and OWASP guidelines. The script generates in-depth HTML report and includes feature for manual risk management.
+It leverages AI (via OpenAI's GPT models) to analyze service descriptions, identify security threats, visualize data flow and suggest remediations based on the STRIDE framework and OWASP guidelines. The script generates in-depth HTML report and includes feature for manual risk assessment.
 
 ## How It Works
 
@@ -44,7 +44,7 @@ pip3 install -r requirements.txt
 
 ## How to Use ❓
 
-1. Create a valid service description using [this guidulines](src/template.md)
+1. Create a valid service description using [these guidelines](src/template.md)
 2. Execute the script
 ```bash
 python3 TaaC-AI.py <path_to_yaml_file>
