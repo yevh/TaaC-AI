@@ -13,7 +13,7 @@ It leverages AI (via OpenAI's GPT models) to analyze service descriptions, ident
 ## Model supported
 
 - GPT-3.5
-- GPT-4 (Soon)
+- GPT-4
 - Claude (Planned)
 - Mistral 7b (Planned)
 - Palm-2-chat-bison (Future)
@@ -143,7 +143,7 @@ dataFlow:  # Removed the dash here
 - ~~GPT-3 Integration~~
 - ~~Report generation~~
 - ~~Manually adding identified threats~~
-- GPT-4 Integration 🔜 
+- ~~GPT-4 Integration~~
 - Claude Integration 
 - Mistral 7b Integration 
 - Palm-2-chat-bison Integration
