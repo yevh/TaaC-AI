@@ -24,7 +24,7 @@ It leverages AI to analyze service descriptions, identify security threats, visu
 
 ## Set API Key
 
-Set the openai api key as an environment variable OPENAI_KEY in your operating system
+Set the openai api key as an environment variable OPENAI_KEY and ANTHROPIC_KEY in your operating system
 
 [OpenAI API](https://openai.com/blog/openai-api)
 [Anthropic API](https://docs.anthropic.com/claude/reference/getting-started-with-the-api)
