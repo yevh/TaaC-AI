@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ service.Description.Name }} Report</title>
+    <title>AuthService Report</title>
     <link href="https://cdn.jsdelivr.net/npm/tabler@1.0.0-alpha.10/dist/css/tabler.min.css" rel="stylesheet">
     <style>
         body {
@@ -156,7 +156,7 @@
 <body>
     <div class="container">
         <header class="page-header">
-            <h1>{{ service.Description.Name }} - Threat Modeling Report <span id="current-timestamp"></span></h1>
+            <h1>AuthService - Threat Modeling Report <span id="current-timestamp"></span></h1>
             <button onclick="downloadHTML()" class="download-button">Download Report</button>
         </header>
 
@@ -165,9 +165,9 @@
             <section class="card">
                 <div class="card-header">Service Description</div>
                 <div class="card-body">
-                    <p><strong>Name:</strong> {{ service.Description.Name }}</p>
-                    <p><strong>Type:</strong> {{ service.Description.Type }}</p>
-                    <p><strong>Criticality:</strong> {{ service.Description.Criticality }}</p>
+                    <p><strong>Name:</strong> AuthService</p>
+                    <p><strong>Type:</strong> Service</p>
+                    <p><strong>Criticality:</strong> Tier1</p>
                 </div>
             </section>
 
@@ -175,7 +175,7 @@
             <section class="card">
                 <div class="card-header">Service Functionality</div>
                 <div class="card-body">
-                    <p>{{ service.Functionality }}</p>
+                    <p>Handles user authentication, including login and token generation.</p>
                 </div>
             </section>
 
@@ -183,9 +183,9 @@
             <section class="card">
                 <div class="card-header">Data Processing Details</div>
                 <div class="card-body">
-                    <p><strong>Type:</strong> {{ service.DataProcessed.Type }}</p>
-                    <p><strong>Data Category:</strong> {{ service.DataProcessed.DataCategory }}</p>
-                    <p><strong>Encryption at Rest:</strong> {{ service.DataProcessed.EncryptionAtRest }}</p>
+                    <p><strong>Type:</strong> Confidential</p>
+                    <p><strong>Data Category:</strong> Auth</p>
+                    <p><strong>Encryption at Rest:</strong> True</p>
                 </div>
             </section>
 
@@ -193,7 +193,7 @@
             <section class="card">
                 <div class="card-header">Network Information</div>
                 <div class="card-body">
-                    <p><strong>Access:</strong> {{ service.Network.Access }}</p>
+                    <p><strong>Access:</strong> Private</p>
                 </div>
             </section>
 
@@ -202,11 +202,11 @@
                 <div class="card-header">Components</div>
                 <div class="card-body">
                     <h3>Internal Components</h3>
-                    <p><strong>Exist:</strong> {{ service.Components.Internal.Exist }}</p>
-                    <p><strong>Source:</strong> {{ service.Components.Internal.Source }}</p>
+                    <p><strong>Exist:</strong> True</p>
+                    <p><strong>Source:</strong> Private</p>
                     <h3>External Components</h3>
-                    <p><strong>Exist:</strong> {{ service.Components.External.Exist }}</p>
-                    <p><strong>Package Manager:</strong> {{ service.Components.External.PackageManager }}</p>
+                    <p><strong>Exist:</strong> True</p>
+                    <p><strong>Package Manager:</strong> NPM</p>
                 </div>
             </section>
 
@@ -214,11 +214,11 @@
             <section class="card">
                 <div class="card-header">Pipeline Configuration</div>
                 <div class="card-body">
-                    <p><strong>Type:</strong> {{ service.Pipeline.Type }}</p>
-                    <p><strong>CODEOWNERS:</strong> {{ service.Pipeline.CODEOWNERS }}</p>
-                    <p><strong>Branch Protection:</strong> {{ service.Pipeline.BranchProtection }}</p>
-                    <p><strong>Sign Commits:</strong> {{ service.Pipeline.SignCommits }}</p>
-                    <p><strong>Pin Actions:</strong> {{ service.Pipeline.PinActions }}</p>
+                    <p><strong>Type:</strong> GithubActions</p>
+                    <p><strong>CODEOWNERS:</strong> True</p>
+                    <p><strong>Branch Protection:</strong> True</p>
+                    <p><strong>Sign Commits:</strong> True</p>
+                    <p><strong>Pin Actions:</strong> True</p>
                 </div>
             </section>
         </div>
@@ -250,7 +250,52 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{ threat_analysis_html | safe }}
+                        <tr>
+<td contenteditable="true">Injection Attacks</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">Attackers may attempt to inject malicious code or SQL queries into the application, potentially allowing them to gain unauthorized access to sensitive data or perform other malicious actions.</td>
+<td contenteditable="true">Spoofing, OWASP Top 10 2021: A03 - Injection, OWASP Top 10 CI/CD Security Risks: Injection Flaws</td>
+<td contenteditable="true">Implement input validation and sanitization to prevent injection attacks. Use parameterized queries or prepared statements when interacting with the database. Validate and sanitize all user input before using it in queries, commands, or function calls.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Broken Authentication</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">Weaknesses in the authentication mechanism, such as weak password policies, lack of multi-factor authentication, or insecure session management, could allow attackers to gain unauthorized access to user accounts.</td>
+<td contenteditable="true">Tampering, OWASP Top 10 2021: A07 - Identification and Authentication Failures, OWASP Top 10 CI/CD Security Risks: Authentication and Authorization</td>
+<td contenteditable="true">Implement strong password policies, enforce multi-factor authentication, and follow secure session management practices. Regularly review and update authentication and authorization mechanisms to address any vulnerabilities.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Sensitive Data Exposure</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">If sensitive data, such as authentication credentials or user information, is not properly protected during transmission or storage, it could be accessed by unauthorized parties.</td>
+<td contenteditable="true">Disclosure of Information, OWASP Top 10 2021: A02 - Cryptographic Failures, OWASP Top 10 CI/CD Security Risks: Secrets Management</td>
+<td contenteditable="true">Ensure that all sensitive data is encrypted both in transit and at rest. Use secure communication protocols like HTTPS and follow best practices for storing and handling sensitive information.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Insecure Dependencies</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">The use of external components or dependencies, such as libraries or frameworks, could introduce vulnerabilities if they are not properly managed and kept up-to-date.</td>
+<td contenteditable="true">Elevation of Privilege, OWASP Top 10 2021: A06 - Vulnerable and Outdated Components, OWASP Top 10 CI/CD Security Risks: Dependencies</td>
+<td contenteditable="true">Regularly review and update all external dependencies to the latest secure versions. Implement a dependency management process to ensure that all components are properly vetted and kept up-to-date.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Insecure CICD Pipelines</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">Vulnerabilities or misconfigurations in the CICD pipeline could allow attackers to tamper with the build process, inject malicious code, or gain unauthorized access to sensitive information.</td>
+<td contenteditable="true">Denial of Service, OWASP Top 10 2021: A05 - Security Misconfiguration, OWASP Top 10 CI/CD Security Risks: CICD Pipeline</td>
+<td contenteditable="true">Implement secure CICD practices, such as enforcing branch protection, using signed commits, pinning actions, and following the principle of least privilege. Regularly review and audit the CICD pipeline to identify and address any security issues.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+
                     </tbody>
                 </table>
                 <div style="margin-top: 10px;">
@@ -300,7 +345,7 @@
             });
         }
 
-        var graph = {{ data_flow_json | safe }};
+        var graph = {"nodes": [{"id": "AuthService"}, {"id": "UserLoginInterface"}, {"id": "UserDatabase"}], "links": [{"source": "UserLoginInterface", "target": "AuthService", "type": "RESTful API"}, {"source": "AuthService", "target": "UserDatabase", "type": "Query"}]};
         var width = 960, height = 600;
         var color = d3.scaleOrdinal(d3.schemeCategory10);
         var nodeRadius = 70;
@@ -405,8 +450,8 @@
 
     <script>
         function downloadHTML() {
-            var service_name = "{{ service_name }}".replace(/ /g, '_');
-            var current_date = "{{ current_date }}";
+            var service_name = "AuthService".replace(/ /g, '_');
+            var current_date = "2024-03-27";
         
             var report_name = service_name + "_" + current_date + "_ThreatModelingReport.html";
         

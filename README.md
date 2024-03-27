@@ -2,10 +2,15 @@
 
 It leverages AI to analyze service descriptions, identify security threats, visualize data flow and suggest remediations based on the STRIDE framework and OWASP guidelines. The script generates in-depth HTML report and includes feature for manual risk assessment.
 
+## Design
+
+![design](/src/design.png)
+
 ## How It Works
 
 - **YAML File Processing:** Loads and validates a YAML file containing the service details
 - **AI Threat Analysis:** If an OpenAI API key is provided, the script uses AI to generate a comprehensive threat modeling analysis
+- **AI Threat Cross validation:** Various LLMs performs a validation results
 - **Data Flow Generation:** Automatically generates a visual representation of the data flow within the service
 - **Manual Risk Management:** Users can manually add, modify, or cross out risks in the generated report
 - **Report Generation:** Produces a detailed HTML report, including both AI-generated and manually added risks
@@ -14,25 +19,34 @@ It leverages AI to analyze service descriptions, identify security threats, visu
 
 - GPT-3.5
 - GPT-4
-- Claude (Planned)
+- Claude 3 Haiku
 - ‎Gemini (Planned)
-- Mistral 7b (Future)
-- llama-2-70b (Future)
 
 ## Set API Key
 
 Set the openai api key as an environment variable OPENAI_KEY in your operating system
 
-Linux/Mac
+[OpenAI API](https://openai.com/blog/openai-api)
+[Anthropic API](https://docs.anthropic.com/claude/reference/getting-started-with-the-api)
+
+**Linux/Mac**
 
 ```bash
 export OPENAI_KEY=sk-ApiKeyExample
 ```
 
-Windows
+```bash
+export ANTHROPIC_KEY=sk-ant-api03-ApiKeyExample
+```
+
+**Windows**
 
 ```bash
 set OPENAI_KEY=sk-ApiKeyExample
+```
+
+```bash
+set ANTHROPIC_KEY=sk-ant-api03-ApiKeyExample
 ```
 
 ## Install dependencies 
@@ -50,14 +64,21 @@ pip3 install -r requirements.txt
 python3 TaaC-AI.py <path_to_yaml_file>
 ```
 
-Use GPT-4 by specifying the ```--model``` option
+Use GPT-4 or Claude as a model to identify threats by specifying the ```--model``` option
 
 ```bash
 python3 TaaC-AI.py --model gpt-4 <path_to_yaml_file>
 ```
+
+To perform Threats result validation by another LLM use ```--cross-validation``` option. Cross-validation will be done by 'claude' for gpt-4, by gpt-4 for claude and gpt-3.5-turbo.
+
+```bash
+python3 TaaC-AI.py --model claude --cross-validation <path_to_yaml_file>
+```
+
 3. Open generate .html report
-4. Review AI-driven Threat Modeling Analysis table, and for false positives or resolved issues, mark the 'Status' checkbox
-5. Add manually identified threats to the Manual Threat Modeling Analysis table (optional)
+4. Review/Edit AI-driven Threat Modeling Analysis table, and for false positives or resolved issues, mark the 'Status' checkbox
+5. Add manually identified threats to the table (optional)
 6. Download the report via the Download Report button 
 
 ## Usage Example 🏁
@@ -129,18 +150,18 @@ dataFlow:  # Removed the dash here
     servicesInvolved: [UserLoginInterface, AuthService, UserDatabase]
 ```
 2. Script execution
-![execution!](src/execution.png)
-3. Download and Review the generated [HTML report](src/AuthService_2024-01-03_ThreatModelingReport.html)
+![execution!](src/execution1.png)
+3. Download and Review the generated [HTML report](src/AuthService_2024-03-27_ThreatModelingReport.html)
    
-![review!](src/review.gif)   
+![review!](src/review1.gif)   
 
 5. Add Threats manually
 
-![manual!](src/manual.gif) 
+![manual!](src/manual1.gif) 
 
 6. Download the latest report
 
-![download!](src/download.gif) 
+![download!](src/download1.gif) 
 
 ## Roadmap 🗓️
 
@@ -150,10 +171,9 @@ dataFlow:  # Removed the dash here
 - ~~Report generation~~
 - ~~Manually adding identified threats~~
 - ~~GPT-4 Integration~~
-- Claude Integration 
+- ~~Claude Integration~~
+- ~~LLM Cross Validation~~
 - ‎Gemini Integration
-- Mistral 7b Integration
-- llama-2-70b Integration
 - Accuracy Comparison
 
 ## Contact 📧
