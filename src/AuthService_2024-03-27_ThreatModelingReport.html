@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthService Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/tabler@1.0.0-alpha.10/dist/css/tabler.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5;
+            color: #333740;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 90%;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            color: #1A202C;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .download-button {
+            background-color: #4C51BF; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            font-size: 14px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: background-color 0.3s, transform 0.2s; 
+            text-align: center; 
+            text-decoration: none; 
+            display: inline-block; 
+            line-height: normal; 
+            white-space: nowrap; 
+        }
+
+        .download-button:hover {
+            background-color: #5A60A5; 
+            transform: scale(1.05); 
+        }
+
+        .download-button:focus {
+            outline: none; 
+            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.5); 
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-around;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #E2E8F0;
+            color: #1A202C;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-body p, .card-body h3 {
+            margin: 10px 0;
+        }
+
+        #threatTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #threatTable th, #threatTable td {
+            border: 1px solid #E3E4E6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #threatTable th {
+            background-color: #CBD5E0;
+            color: #1A202C;
+        }
+
+        #threatTable tr:nth-child(even) {
+            background-color: #F7FAFC;
+        }
+
+        .table-button {
+            padding: 10px 20px;
+            margin: 10px 5px 10px 0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4C51BF;
+            transition: background-color 0.2s;
+        }
+
+        .table-button:hover {
+            background-color: #5A60A5;
+        }
+
+        .add-button {
+            background-color: #34C759;
+        }
+
+        .delete-button {
+            background-color: #FF3B30;
+        }
+
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+
+            .card {
+                min-width: auto;
+                max-width: 600px;
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>AuthService - Threat Modeling Report <span id="current-timestamp"></span></h1>
+            <button onclick="downloadHTML()" class="download-button">Download Report</button>
+        </header>
+
+        <div class="flex-container">
+            <!-- Service Description -->
+            <section class="card">
+                <div class="card-header">Service Description</div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> AuthService</p>
+                    <p><strong>Type:</strong> Service</p>
+                    <p><strong>Criticality:</strong> Tier1</p>
+                </div>
+            </section>
+
+            <!-- Service Functionality -->
+            <section class="card">
+                <div class="card-header">Service Functionality</div>
+                <div class="card-body">
+                    <p>Handles user authentication, including login and token generation.</p>
+                </div>
+            </section>
+
+            <!-- Data Processing Details -->
+            <section class="card">
+                <div class="card-header">Data Processing Details</div>
+                <div class="card-body">
+                    <p><strong>Type:</strong> Confidential</p>
+                    <p><strong>Data Category:</strong> Auth</p>
+                    <p><strong>Encryption at Rest:</strong> True</p>
+                </div>
+            </section>
+
+            <!-- Network Information -->
+            <section class="card">
+                <div class="card-header">Network Information</div>
+                <div class="card-body">
+                    <p><strong>Access:</strong> Private</p>
+                </div>
+            </section>
+
+            <!-- Components -->
+            <section class="card">
+                <div class="card-header">Components</div>
+                <div class="card-body">
+                    <h3>Internal Components</h3>
+                    <p><strong>Exist:</strong> True</p>
+                    <p><strong>Source:</strong> Private</p>
+                    <h3>External Components</h3>
+                    <p><strong>Exist:</strong> True</p>
+                    <p><strong>Package Manager:</strong> NPM</p>
+                </div>
+            </section>
+
+            <!-- Pipeline Configuration -->
+            <section class="card">
+                <div class="card-header">Pipeline Configuration</div>
+                <div class="card-body">
+                    <p><strong>Type:</strong> GithubActions</p>
+                    <p><strong>CODEOWNERS:</strong> True</p>
+                    <p><strong>Branch Protection:</strong> True</p>
+                    <p><strong>Sign Commits:</strong> True</p>
+                    <p><strong>Pin Actions:</strong> True</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Data Flow Information -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Data Flow Information</h2>
+            </div>
+            <div class="card-body">
+                <div id="data-flow-graph"></div>
+            </div>
+        </div>
+
+        <!-- Threat Analysis Section -->
+        <section class="card">
+            <div class="card-header">Threats</div>
+            <div class="card-body">
+                <table id="threatTable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Validator</th>
+                            <th>Description</th>
+                            <th>Categories</th>
+                            <th>Remediation</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+<td contenteditable="true">Injection Attacks</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">Attackers may attempt to inject malicious code or SQL queries into the application, potentially allowing them to gain unauthorized access to sensitive data or perform other malicious actions.</td>
+<td contenteditable="true">Spoofing, OWASP Top 10 2021: A03 - Injection, OWASP Top 10 CI/CD Security Risks: Injection Flaws</td>
+<td contenteditable="true">Implement input validation and sanitization to prevent injection attacks. Use parameterized queries or prepared statements when interacting with the database. Validate and sanitize all user input before using it in queries, commands, or function calls.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Broken Authentication</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">Weaknesses in the authentication mechanism, such as weak password policies, lack of multi-factor authentication, or insecure session management, could allow attackers to gain unauthorized access to user accounts.</td>
+<td contenteditable="true">Tampering, OWASP Top 10 2021: A07 - Identification and Authentication Failures, OWASP Top 10 CI/CD Security Risks: Authentication and Authorization</td>
+<td contenteditable="true">Implement strong password policies, enforce multi-factor authentication, and follow secure session management practices. Regularly review and update authentication and authorization mechanisms to address any vulnerabilities.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Sensitive Data Exposure</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">If sensitive data, such as authentication credentials or user information, is not properly protected during transmission or storage, it could be accessed by unauthorized parties.</td>
+<td contenteditable="true">Disclosure of Information, OWASP Top 10 2021: A02 - Cryptographic Failures, OWASP Top 10 CI/CD Security Risks: Secrets Management</td>
+<td contenteditable="true">Ensure that all sensitive data is encrypted both in transit and at rest. Use secure communication protocols like HTTPS and follow best practices for storing and handling sensitive information.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Insecure Dependencies</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">The use of external components or dependencies, such as libraries or frameworks, could introduce vulnerabilities if they are not properly managed and kept up-to-date.</td>
+<td contenteditable="true">Elevation of Privilege, OWASP Top 10 2021: A06 - Vulnerable and Outdated Components, OWASP Top 10 CI/CD Security Risks: Dependencies</td>
+<td contenteditable="true">Regularly review and update all external dependencies to the latest secure versions. Implement a dependency management process to ensure that all components are properly vetted and kept up-to-date.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+<tr>
+<td contenteditable="true">Insecure CICD Pipelines</td>
+<td>🟢 claude 🟢 gpt-4</td>
+<td contenteditable="true">Vulnerabilities or misconfigurations in the CICD pipeline could allow attackers to tamper with the build process, inject malicious code, or gain unauthorized access to sensitive information.</td>
+<td contenteditable="true">Denial of Service, OWASP Top 10 2021: A05 - Security Misconfiguration, OWASP Top 10 CI/CD Security Risks: CICD Pipeline</td>
+<td contenteditable="true">Implement secure CICD practices, such as enforcing branch protection, using signed commits, pinning actions, and following the principle of least privilege. Regularly review and audit the CICD pipeline to identify and address any security issues.</td>
+<td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+<td><button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button><button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button></td>
+</tr>
+
+                    </tbody>
+                </table>
+                <div style="margin-top: 10px;">
+                    <button onclick="addThreat()" class="table-button add-button">Add Threat</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script>
+        function addThreat() {
+            var tbody = document.querySelector('#threatTable tbody');
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td contenteditable="true"></td>
+                <td>🤖 Human</td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td><input type="checkbox" onchange="toggleStrikeThrough(this)"></td>
+                <td>
+                    <button class="table-button" onclick="saveThreat(this.parentNode.parentNode)">Save</button>
+                    <button class="table-button delete-button" onclick="deleteThreat(this.parentNode.parentNode)">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function saveThreat(row) {
+            row.querySelectorAll('td[contenteditable="true"]').forEach(cell => {
+                cell.removeAttribute('data-original');
+                cell.style.backgroundColor = '';
+            });
+        }
+
+        function deleteThreat(row) {
+            if (confirm('Are you sure you want to delete this threat?')) {
+                row.remove();
+            }
+        }
+
+        function toggleStrikeThrough(checkbox) {
+            var row = checkbox.parentElement.parentElement;
+            row.querySelectorAll('td:not(:last-child)').forEach(cell => {
+                cell.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
+            });
+        }
+
+        var graph = {"nodes": [{"id": "AuthService"}, {"id": "UserLoginInterface"}, {"id": "UserDatabase"}], "links": [{"source": "UserLoginInterface", "target": "AuthService", "type": "RESTful API"}, {"source": "AuthService", "target": "UserDatabase", "type": "Query"}]};
+        var width = 960, height = 600;
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
+        var nodeRadius = 70;
+
+        var svg = d3.select("#data-flow-graph").append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+        svg.append("defs").selectAll("marker")
+            .data(["end"])
+            .enter().append("marker")
+            .attr("id", String)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", nodeRadius + 10)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5");
+
+        var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id).distance(200))
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        var link = svg.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(graph.links)
+            .enter().append("line")
+            .attr("stroke", "black")
+            .attr("stroke-width", 2)
+            .attr("marker-end", "url(#end)");
+
+        var node = svg.append("g")
+            .attr("class", "nodes")
+            .selectAll("circle")
+            .data(graph.nodes)
+            .enter().append("circle")
+            .attr("r", nodeRadius)
+            .attr("fill", d => color(d.group))
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        var nodeLabels = svg.selectAll(".node-label")
+            .data(graph.nodes)
+            .enter().append("text")
+            .classed("node-label", true)
+            .attr("text-anchor", "middle")
+            .style("fill", "#fff")
+            .style("font-size", "14px")
+            .text(d => d.id);
+
+        var linkLabels = svg.selectAll(".link-label")
+            .data(graph.links)
+            .enter().append("text")
+            .classed("link-label", true)
+            .attr("font-size", 12)
+            .attr("dx", 50)
+            .attr("dy", -5)
+            .text(d => d.type);
+
+        simulation.nodes(graph.nodes).on("tick", ticked);
+        simulation.force("link").links(graph.links);
+
+        function ticked() {
+            link.attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node.attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+
+            nodeLabels.attr("x", d => d.x)
+                      .attr("y", d => d.y + 5);
+
+            linkLabels.attr("x", d => (d.source.x + d.target.x) / 2)
+                      .attr("y", d => (d.source.y + d.target.y) / 2);
+        }
+
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+    </script>
+
+    <script>
+        function downloadHTML() {
+            var service_name = "AuthService".replace(/ /g, '_');
+            var current_date = "2024-03-27";
+        
+            var report_name = service_name + "_" + current_date + "_ThreatModelingReport.html";
+        
+            var clone = document.documentElement.cloneNode(true);
+        
+            // Remove elements that should not be in the downloaded report
+            var elementsToRemove = ['.download-button', '.add-button', '.delete-button'];
+            elementsToRemove.forEach(selector => {
+                var elem = clone.querySelector(selector);
+                if (elem) {
+                    elem.remove();
+                }
+            });
+        
+            // Replace interactive elements with static content
+            Array.from(clone.querySelectorAll('#threatTable td[contenteditable="true"]')).forEach(el => {
+                var staticEl = document.createElement('td');
+                staticEl.textContent = el.textContent;
+                el.parentNode.replaceChild(staticEl, el);
+            });
+        
+            // Replace checkbox with status text and display the text as crossed out for completed threats
+            Array.from(clone.querySelectorAll('#threatTable tr')).forEach(row => {
+                var completedCheckbox = row.querySelector('input[type="checkbox"]');
+                if (completedCheckbox) {
+                    var statusCell = row.cells[row.cells.length - 2];
+                    statusCell.textContent = completedCheckbox.checked ? 'Completed' : 'Pending';
+        
+                    if (completedCheckbox.checked) {
+                        Array.from(row.querySelectorAll('td:not(:last-child)')).forEach(cell => {
+                            cell.style.textDecoration = 'line-through';
+                        });
+                    }
+                }
+            });
+        
+            // Remove the 'Actions' column
+            Array.from(clone.querySelectorAll('#threatTable th:last-child, #threatTable td:last-child')).forEach(el => {
+                el.remove();
+            });
+        
+            var scriptsToRemove = clone.querySelectorAll('script');
+            scriptsToRemove.forEach(script => {
+                script.remove();
+            });
+        
+            var blob = new Blob([clone.outerHTML], { type: 'text/html' });
+        
+            var element = document.createElement('a');
+            element.href = URL.createObjectURL(blob);
+            element.download = report_name;
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var currentDate = new Date();
+            var dateString = currentDate.toLocaleString(); 
+
+            document.getElementById('current-timestamp').textContent = dateString;
+        });
+    </script>
+
+</body>
+</html>
