@@ -1,4 +1,4 @@
-# AI-driven Threat Modeling-as-a-Code (TaaC)
+# AI-driven Threat Modeling-as-a-Code (TaaC-AI)
 
 It leverages AI to analyze service descriptions, identify security threats, visualize data flow and suggest remediations based on the STRIDE framework and OWASP guidelines. The script generates in-depth HTML report and includes feature for manual risk assessment.
 
