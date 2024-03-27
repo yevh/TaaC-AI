@@ -287,7 +287,7 @@ class PrintManager:
 
     @staticmethod
     def print_usage():
-        print(f"{PrintManager.TITLE_STYLE}AI-driven Threat modeling-as-a-Code (TaaC) v1.0{PrintManager.NORMAL_STYLE}")
+        print(f"{PrintManager.TITLE_STYLE}AI-driven Threat modeling-as-a-Code (TaaC) v1.1{PrintManager.NORMAL_STYLE}")
         print(f"Created by YevhSec1\n")
         print(f"{PrintManager.HIGHLIGHT_STYLE}Usage:{PrintManager.NORMAL_STYLE} python3 TaaC.py [options] <yaml_file>\n")
         print(f"{PrintManager.HIGHLIGHT_STYLE}Options:{PrintManager.NORMAL_STYLE}")
