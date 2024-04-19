@@ -4,7 +4,7 @@ It leverages AI to analyze service descriptions, identify security threats, visu
 
 ## Design
 
-![design](/src/design.png)
+![design](/src/design1.png)
 
 ## How It Works
 
@@ -56,21 +56,25 @@ set ANTHROPIC_KEY=sk-ant-api03-ApiKeyExample
 pip3 install -r requirements.txt
 ```
 ## Install Mistral and Ollama
-If you want to use mistral 7b as a model, follow the following steps:
-1. Go to [ollama.ai](https://ollama.ai) and follow the instructions to install Ollama.
-2. Install mistral (make sure the Ollama desktop app is closed.):
+
+1. Download and install Ollama [ollama.ai](https://ollama.ai)
+2. Install Mistral
+
 ```bash
 ollama pull mistral
 ```
-3. start ollama service
+3. Start ollama service (make sure the Ollama desktop app is closed)
+
 ```bash
 ollama serve
 ```
 Now you can use mistral as the main model:
+
 ```bash
 python3 TaaC-AI.py --model mistral <path_to_yaml_file>
 ```
-Or for cross-validation.
+Or for cross-validation
+
 ```bash
 python3 TaaC-AI.py --model claude --cross-validation mistral <path_to_yaml_file>
 ```
@@ -83,7 +87,7 @@ python3 TaaC-AI.py --model claude --cross-validation mistral <path_to_yaml_file>
 python3 TaaC-AI.py <path_to_yaml_file>
 ```
 
-Use GPT-4, Claude or Mistral as a model to identify threats by specifying the ```--model``` option
+Use ```gpt-4```, ```claude``` or ```mistral``` as a model to identify threats by specifying the ```--model``` option
 
 ```bash
 python3 TaaC-AI.py --model gpt-4 <path_to_yaml_file>
@@ -92,7 +96,7 @@ python3 TaaC-AI.py --model gpt-4 <path_to_yaml_file>
 To perform Threats result validation by another LLM use ```--cross-validation``` option.
 
 ```bash
-python3 TaaC-AI.py --model claude --cross-validation mistral <path_to_yaml_file>
+python3 TaaC-AI.py --model claude --cross-validation claude <path_to_yaml_file>
 ```
 
 3. Open generate .html report
@@ -169,7 +173,7 @@ dataFlow:  # Removed the dash here
     servicesInvolved: [UserLoginInterface, AuthService, UserDatabase]
 ```
 2. Script execution
-![execution!](src/execution2.png)
+![execution!](src/execution1.png)
 3. Download and Review the generated [HTML report](src/AuthService_2024-03-27_ThreatModelingReport.html)
    
 ![review!](src/review1.gif)   
@@ -192,8 +196,7 @@ dataFlow:  # Removed the dash here
 - ~~GPT-4 Integration~~
 - ~~Claude Integration~~
 - ~~LLM Cross Validation~~
-- ~~Ollama Integration~~
-- ~~Mistral Integration~~
+- ~~Mistral Integration via Ollama~~
 - ‎Gemini Integration
 - Accuracy Comparison
 
