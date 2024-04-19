@@ -4,6 +4,7 @@ import yaml
 import json
 from openai import OpenAI
 from anthropic import Client
+from ollama import Client as OllamaClient
 import argparse
 from datetime import datetime, date
 from jinja2 import Environment, FileSystemLoader
@@ -69,6 +70,7 @@ class ThreatModeling:
         self.model = model
         self.openai_client = OpenAI(api_key=os.getenv(Config.OPENAI_KEY))
         self.anthropic_client = Client(api_key=os.getenv(Config.ANTHROPIC_KEY))
+        self.ollama_client = OllamaClient()
 
     @staticmethod
     def convert_data_flow_to_json(data_flows):
@@ -90,6 +92,8 @@ class ThreatModeling:
             return self.generate_threat_modeling_openai()
         elif self.model == 'claude':
             return self.generate_threat_modeling_anthropic()
+        elif self.model == 'mistral':
+            return self.generate_threat_modeling_ollama()
         else:
             raise ValueError(f"Unsupported model: {self.model}")
 
@@ -199,6 +203,59 @@ class ThreatModeling:
         except Exception as e:
             log(f"Error generating threat modeling with Anthropic: {str(e)}")
             return f"<p>Error generating threat modeling: {str(e)}</p>"
+        
+    def generate_threat_modeling_ollama(self):
+
+        prompt = f"""Perform a thorough threat modeling analysis for the provided service, utilizing the STRIDE framework, OWASP Top 10 2021, and OWASP Top 10 CI/CD Security Risks guidelines. Return the analysis in JSON format with the following structure:
+        {{
+            "threats": [
+                {{
+                    "title": "Threat Title",
+                    "description": "Detailed threat description.",
+                    "categories": ["STRIDE Category", "OWASP Top 10 2021 Category", "OWASP Top 10 CI/CD Security Risks Category"],
+                    "remediation": "Recommended steps or strategies to mitigate or resolve the threat.",
+                    "validator": "🟢 {self.model}"
+                }},
+                ...
+            ]
+        }}
+
+        Service data:
+        {self.service_description}
+        """
+
+        log(f"Ollama API Request: {prompt}")
+
+        try:
+            response = self.ollama_client.generate(
+                model="mistral",
+                prompt=prompt,
+                format="json",
+                stream= False,
+                system="You are a security expert."
+            )
+            log(f"Ollama API Response: {response}")
+            response_text = response['response'].strip()
+
+            log(f"Ollama API Response Content: {response_text}")
+            
+            json_start = response_text.find("{")
+            json_end = response_text.rfind("}") + 1
+            if json_start != -1 and json_end != -1:
+                json_content = response_text[json_start:json_end].strip()
+                try:
+                    threat_analysis_json = json.loads(json_content)
+                    return json.dumps(threat_analysis_json)
+                except json.JSONDecodeError:
+                    log("Failed to parse extracted JSON content.")
+            else:
+                log("Failed to extract JSON content from the response.")
+
+            return "[]"
+
+        except Exception as e:
+            log(f"Error generating threat modeling with Ollama: {str(e)}")
+            return f"<p>Error generating threat modeling: {str(e)}</p>"
 
     @staticmethod
     def validate_threats(threats, validation_model, client):
@@ -237,6 +294,17 @@ class ThreatModeling:
                 log(f"Validation prompt for Claude: {prompt}")  
                 log(f"Validation response from Claude: {response.content}") 
                 is_valid = 'yes' in response.content[0].text.strip().lower()
+            elif validation_model == 'mistral':
+                response = client.generate(
+                        model="mistral",
+                        prompt=prompt,
+                        format="json",
+                        stream=False,
+                        system="You are a security expert. Validate the threat."
+                )
+                log(f"Validation prompt for Mistral: {prompt}")  
+                log(f"Validation response from Mistral: {response['response']}") 
+                is_valid = 'yes' in response['response'].lower()
             else:
                 raise ValueError(f"Unsupported validation model: {validation_model}")
 
@@ -343,8 +411,8 @@ def convert_json_to_html(json_data):
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Generate a threat modeling report from a YAML file.')
     parser.add_argument('yaml_file', help='Path to the YAML file containing the service information.')
-    parser.add_argument('--model', choices=['gpt-3.5-turbo', 'gpt-4', 'claude'], default='gpt-3.5-turbo', help='Choice of LLM for generating the report.')
-    parser.add_argument('--cross-validation', action='store_true', help='Perform cross-validation using two LLMs.')
+    parser.add_argument('--model', choices=['gpt-3.5-turbo', 'gpt-4', 'claude', 'mistral'], default='gpt-3.5-turbo', help='Choice of LLM for generating the report.')
+    parser.add_argument('--cross-validation', choices=['gpt-3.5-turbo', 'gpt-4', 'claude', 'mistral'], help='Perform cross-validation using two LLMs.')
     parser.add_argument('--debug', action='store_true', help='Enable debug logging.')
     return parser.parse_args()
 
@@ -377,13 +445,7 @@ def main():
     log(f"Threat Analysis JSON: {threat_analysis_json}")
 
     if Config.CROSS_VALIDATION:
-        if args.model == 'gpt-4':
-            validation_model = 'claude'
-        elif args.model == 'claude':
-            validation_model = 'gpt-4'
-        else:
-            validation_model = 'gpt-4'
-
+        validation_model = Config.CROSS_VALIDATION
         log(f"Performing cross-validation using {validation_model}")
         threat_modeling_validation = ThreatModeling(json.dumps(service_info, indent=2), validation_model)
         threats = json.loads(threat_analysis_json)['threats']
@@ -392,7 +454,7 @@ def main():
         validated_threats = ThreatModeling.validate_threats(
             threats,
             validation_model,
-            threat_modeling_validation.openai_client if validation_model.startswith('gpt') else threat_modeling_validation.anthropic_client
+            threat_modeling_validation.openai_client if validation_model.startswith('gpt') else  threat_modeling_validation.ollama_client if validation_model == 'mistral' else  threat_modeling_validation.anthropic_client
         )
         log(f"Validated threats: {len(validated_threats)}")
         
