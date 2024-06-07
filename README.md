@@ -80,7 +80,10 @@ python3 TaaC-AI.py --model claude --cross-validation mistral <path_to_yaml_file>
 ```
 
 ## How to Use ❓
-1. Create a valid service description using [these guidelines](src/template.md)
+1. Create a valid service description using [these guidelines](src/template.md) or use ```taac_yaml_generator.py``` that will guide you through the process of generating one
+
+![yaml_generator!](src/yaml_generator.png)
+   
 2. Execute the script (GPT-3.5 is used by default)
 
 ```bash
