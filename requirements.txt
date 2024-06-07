@@ -4,3 +4,4 @@ jinja2
 argparse
 anthropic
 ollama
+termcolor
