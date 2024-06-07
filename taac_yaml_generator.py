@@ -118,8 +118,7 @@ class ServiceDescriptionGenerator:
                                                          validation=lambda x: x.lower() in ['yes', 'no']).capitalize(),
                 'Authentication': {
                     'Exist': self.get_user_input("Does authentication exist for this data flow? (Yes/No): ",
-                                                 validation=lambda x: x.lower() in ['yes', 'no']).capitalize(),
-                    'Type': self.get_user_input("Enter the authentication type (JWT/API Keys/etc): ", required=False)
+                                                 validation=lambda x: x.lower() in ['yes', 'no']).capitalize()
                 },
                 'Authorization': self.get_user_input("Enter the authorization level (read/write/admin/etc): "),
                 'Protocol': self.get_user_input("Enter the communication protocol (HTTPS/AMQP/etc): "),
@@ -129,6 +128,9 @@ class ServiceDescriptionGenerator:
                 'interactions': [],
                 'servicesInvolved': []
             }
+
+            if data_flow['Authentication']['Exist'] == 'Yes':
+                data_flow['Authentication']['Type'] = self.get_user_input("Enter the authentication type (JWT/API Keys/etc): ")
 
             while True:
                 add_interaction = self.get_user_input("Do you want to add an interaction? (Yes/No): ",
@@ -152,7 +154,23 @@ class ServiceDescriptionGenerator:
 
     def save_yaml_file(self, file_name):
         with open(file_name, 'w') as file:
-            yaml.dump(self.service_description, file, default_flow_style=False)
+            file.write(f"Version: '{self.service_description['Version']}'\n")
+            file.write(f"Date: {self.service_description['Date']}\n\n")
+            file.write("# Service Description\n")
+            file.write(yaml.dump({'Description': self.service_description['Description']}, default_flow_style=False))
+            file.write("\n# Service Functionality\n")
+            file.write(f"Functionality: {self.service_description['Functionality']}\n\n")
+            file.write("# Data Processing Details\n")
+            file.write(yaml.dump({'DataProcessed': self.service_description['DataProcessed']}, default_flow_style=False))
+            file.write("\n# Components Used by the Service\n")
+            file.write(yaml.dump({'Components': self.service_description['Components']}, default_flow_style=False))
+            file.write("\n# Pipeline Configuration\n")
+            file.write(yaml.dump({'Pipeline': self.service_description['Pipeline']}, default_flow_style=False))
+            file.write("\n# Network Information\n")
+            file.write(yaml.dump({'Network': self.service_description['Network']}, default_flow_style=False))
+            file.write("\n# Data Flow\n")
+            file.write(yaml.dump({'dataFlow': self.service_description['dataFlow']}, default_flow_style=False))
+
         print(colored(f"\nService description saved to {file_name}", 'green'))
 
 def main():
