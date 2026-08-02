@@ -68,9 +68,20 @@ class ThreatModeling:
     def __init__(self, service_description, model):
         self.service_description = service_description
         self.model = model
-        self.openai_client = OpenAI(api_key=os.getenv(Config.OPENAI_KEY))
-        self.anthropic_client = Client(api_key=os.getenv(Config.ANTHROPIC_KEY))
-        self.ollama_client = OllamaClient()
+        self.openai_client = None
+        self.anthropic_client = None
+        self.ollama_client = None
+
+        if self.model in ['gpt-3.5-turbo', 'gpt-4']:
+            openai_key = os.getenv(Config.OPENAI_KEY)
+            if openai_key:
+                self.openai_client = OpenAI(api_key=openai_key)
+        elif self.model == 'claude':
+            anthropic_key = os.getenv(Config.ANTHROPIC_KEY)
+            if anthropic_key:
+                self.anthropic_client = Client(api_key=anthropic_key)
+        elif self.model == 'mistral':
+            self.ollama_client = OllamaClient()
 
     @staticmethod
     def convert_data_flow_to_json(data_flows):
@@ -98,7 +109,7 @@ class ThreatModeling:
             raise ValueError(f"Unsupported model: {self.model}")
 
     def generate_threat_modeling_openai(self):
-        if not self.openai_client.api_key:
+        if not self.openai_client:
             return "<p>OpenAI key was not provided or is incorrect. AI Threat Modeling was not performed.</p>"
 
         prompt = f"""Perform a thorough threat modeling analysis for the provided service, utilizing the STRIDE framework, OWASP Top 10 2021, and OWASP Top 10 CI/CD Security Risks guidelines. Return the analysis in JSON format with the following structure:
@@ -148,7 +159,7 @@ class ThreatModeling:
             return f"<p>Error generating threat modeling: {str(e)}</p>"
 
     def generate_threat_modeling_anthropic(self):
-        if not self.anthropic_client.api_key:
+        if not self.anthropic_client:
             return "<p>Anthropic key was not provided or is incorrect. AI Threat Modeling was not performed.</p>"
 
         prompt = f"""Perform a thorough threat modeling analysis for the provided service, utilizing the STRIDE framework, OWASP Top 10 2021, and OWASP Top 10 CI/CD Security Risks guidelines. Return the analysis in JSON format with the following structure:
